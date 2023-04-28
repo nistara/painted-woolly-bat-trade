@@ -3,34 +3,26 @@ options(scipen = 999)
 
 # * Libraries
 # ==============================================================================
-library(janitor)
-library(ggplot2)
-library(dplyr)
-library(stringr)
 library(DT)
-library(plotly)
-library(scales)
-library(lubridate)
-library(gtsummary)
-library(flextable)
-library(hrbrthemes)
-library(viridis)
 library(conflicted)
-library(data.table)
-library(ggrepel)
-library(directlabels)
-library(ggthemes)
-library(ggforce)
-library(maptools)
-library(maps)
-library(sf)
-library(maps)
-library(tidyverse)
-library(hrbrthemes)
-library(ggtext)
-library(extrafont)
-library(ggpattern)
 library(cowplot)
+library(data.table)
+library(dplyr)
+library(extrafont)
+library(flextable)
+library(ggforce)
+library(ggpattern)
+library(ggplot2)
+library(ggtext)
+library(ggthemes)
+library(gtsummary)
+library(hrbrthemes)
+library(janitor)
+library(lubridate)
+# library(maps)
+# library(maptools)
+library(stringr)
+library(tidyr)
 # extrafont::font_import()
 
 extrafont::loadfonts(quiet = TRUE)
@@ -40,35 +32,13 @@ conflicts_prefer(dplyr::filter)
 conflicts_prefer(dplyr::select)
 
 
-# define custom fisher's test with simulate.p.value option = TRUE
-# ==============================================================================
-# ref: https://stackoverflow.com/a/64484792/5443003
-fisher.test.simulate.p.values = function(data, variable, by, ...) {
-  result = list()
-  test_results = stats::fisher.test(data[[variable]], data[[by]], simulate.p.value = TRUE)
-  result$p = test_results$p.value
-  result$test = test_results$method
-  result
-}
-
-
-# DT options
-# ------------------------------------------------------------------------------
-options(DT.options = list(pageLength = 15,
-                          filter = "top",
-                          initComplete = JS(
-        "function(settings, json) {",
-        "$(this.api().table().container()).css({'font-size': '75%'});",
-        "}"
-        )))
-
 
 # * Load data and update for publication ready results
 # ==============================================================================
 out_dir = "results"
 if( !dir.exists(out_dir) ) dir.create(out_dir)
 
-vl = readRDS("data/verified_listing_data.RDS") # verified listings
+vl = readRDS("data/verified_listing_data.RDS") # verified, unique listings
 bat_df = readRDS("data/bat-listings.RDS") # all bat listings
 
 
@@ -165,9 +135,9 @@ tbl_s1 |>
 
 
 # ==============================================================================
-# * Tbl 2. Comparison between K. picta listings on ebay and etsy
+# * Tbl S2. Comparison between K. picta listings on ebay and etsy
 # ==============================================================================
-tbl_2 = vl |>
+tbl_s2 = vl |>
   filter(species %in% "K. picta" & shop %in% c("eBay", "Etsy")) |>
   select(format, part, shop) |>
   tbl_summary(
@@ -190,9 +160,9 @@ tbl_2 = vl |>
   ) |>
   add_p()
 
-tbl_2
+tbl_s2
 
-tbl_2 |>
+tbl_s2 |>
   as_flex_table() |>
   save_as_docx(path = "results/tbl-2_k-picta-etsy-vs-ebay.docx")
 
@@ -242,7 +212,6 @@ format_bar_plot = vl |>
 format_bar_plot
 
 ggsave("results/plot_format-bar-plot.jpg", format_bar_plot, width = 9)
-ggsave("results/plot_format-bar-plot.svg", format_bar_plot, width = 9)
 
 
 
@@ -323,7 +292,6 @@ priceline_plot = plot_df |>
 priceline_plot
 
 ggsave("results/fig-3_mean-weekly-price.jpg", priceline_plot, width = 7)
-ggsave("results/fig-3_mean-weekly-price.svg", priceline_plot, width = 7)
 
 
 # Figure caption
@@ -360,16 +328,24 @@ mean_price_diff = mean_price_kpicta - mean_price_others
 # * Differences in average weekly prices compared to second week of Dec
 # ==============================================================================
 peak_prices = plot_df |>
+  select(bat_shop, week, weekly_shop_price) |>
+  mutate(weekly_shop_price = round(weekly_shop_price, 2)) |>
   group_by(bat_shop) |>
   top_n(1, weekly_shop_price)
   
 peak_week = unique(peak_prices$week)
 
-pre_peak_week_prices = plot_df |>
+pre_peak_prices = plot_df |>
   filter(week < peak_week) |>
   group_by(bat_shop) |>
-  summarise(shop_price = mean(weekly_shop_price))
+  summarise(pre_peak_price = mean(weekly_shop_price)) |>
+  mutate(pre_peak_price = round(pre_peak_price, 2))
  
+peak_prices |>
+  left_join(pre_peak_prices, by = "bat_shop") |>
+  mutate(price_diff = weekly_shop_price - pre_peak_price) |>
+  data.frame()
+
 
 
 # ==============================================================================
@@ -609,6 +585,7 @@ ggsave("results/fig-5_ship-country.jpg", country_plot, width = 7)
 ggsave("results/fig-5_ship-country.svg", country_plot, width = 7)
 
 
+
 # ==============================================================================
 # * Shipping state plots
 # ==============================================================================
@@ -640,9 +617,10 @@ state_bar_plot = ship_df %>%
       panel.grid.minor.y = element_blank(),
       panel.grid.major.y = element_blank(),
       legend.position="top",
+      axis.title.x = element_text(size = 13),
       axis.text.x = element_text(size = 12),
       axis.title.y = element_text(size = 15),
-      axis.title.x = element_text(size = 13),
+      axis.text.y = element_text(size = 6),
       legend.text=element_text(size=13)
     ) +
     xlab("") +
@@ -687,7 +665,8 @@ state_map_plot = ggplot(data = states) +
     values = c("#F0C19C", "#E88024"),
     na.translate = FALSE) +
   theme(legend.position='top',
-    legend.text = element_markdown()) +
+    legend.text = element_markdown(),
+    ) +
   scale_x_continuous(expand=c(0,0))+
   scale_y_continuous(expand=c(0,0)) +
   guides(fill = guide_legend(reverse = TRUE))
@@ -697,13 +676,13 @@ state_map_plot
 
 # Combine bar and map------------------------------------------------------
 state_plot = plot_grid(state_bar_plot,
-  state_map_plot, ncol = 1, rel_heights = c(1.5, 1),
-  labels = c("A.", "B."))
+  state_map_plot, ncol = 1,
+  labels = c("A.", "B."),
+  rel_heights = c(2, 1))
 
 state_plot
 
 ggsave("results/fig-6_ship-state.jpg", state_plot, width = 7)
-ggsave("results/fig-6_ship-state.svg", state_plot, width = 7)
 
 
 # Numbers behind figure
