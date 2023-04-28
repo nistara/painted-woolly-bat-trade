@@ -3,7 +3,6 @@ options(scipen = 999)
 
 # * Libraries
 # ==============================================================================
-library(DT)
 library(conflicted)
 library(cowplot)
 library(data.table)
@@ -19,8 +18,6 @@ library(gtsummary)
 library(hrbrthemes)
 library(janitor)
 library(lubridate)
-# library(maps)
-# library(maptools)
 library(stringr)
 library(tidyr)
 # extrafont::font_import()

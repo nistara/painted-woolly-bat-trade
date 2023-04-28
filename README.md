@@ -1,6 +1,3 @@
-# The online,ornamental trade in the painted woolly bat (Kerivoula 
+# The online,ornamental trade in the painted woolly bat (_Kerivoula picta_)
 
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip) 
-
-
-
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
