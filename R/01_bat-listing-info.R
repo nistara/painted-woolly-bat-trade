@@ -1,8 +1,8 @@
+# ==============================================================================
+# * Set up workspace and load libraries
+# ==============================================================================
 options(scipen = 999)
 
-
-# * Libraries
-# ==============================================================================
 library(conflicted)
 library(cowplot)
 library(data.table)
@@ -29,15 +29,13 @@ conflicts_prefer(dplyr::filter)
 conflicts_prefer(dplyr::select)
 
 
-
 # * Load data and update for publication ready results
 # ==============================================================================
 out_dir = "results"
 if( !dir.exists(out_dir) ) dir.create(out_dir)
 
-vl = readRDS("data/verified_listing_data.RDS") # verified, unique listings
-bat_df = readRDS("data/bat-listings.RDS") # all bat listings
-
+vl = readRDS("data/Coleman_et_al_SI_2_unique-listings-info.RDS") # verified, unique listings
+bat_df = readRDS("data/Coleman_et_al_SI_1_all-bat-listings.RDS") # all bat listings
 
 
 # ==============================================================================
@@ -46,7 +44,6 @@ bat_df = readRDS("data/bat-listings.RDS") # all bat listings
 search_dates = sort(unique(bat_df$date[ bat_df$shop %in% c("Etsy", "eBay") ]))
 search_dates[1]
 search_dates[length(search_dates)]
-
 
 
 # ==============================================================================
@@ -58,23 +55,22 @@ search_dates[length(search_dates)]
 #     UNSURE	5 (0.37%)
 
 
-
 # ==============================================================================
 # * Tbl 1. Numbers and characteristics of identified bat listings
 # ==============================================================================
 tbl_1 = vl |>
-  select(species, shop, format, part, price_mean) |>
+  select(species, shop, format, part, mean_price) |>
   tbl_summary(
     by = species,
     label = list(
       shop ~ "Shop",
       format ~ "Format",
       part ~ "Bat part",
-      price_mean ~ "Price ($)"
+      mean_price ~ "Price ($)"
     ),
     statistic = list(
       all_categorical() ~ "{n} ({p}%)",
-      price_mean ~ "{median} ({IQR})"
+      mean_price ~ "{median} ({IQR})"
     ),
     sort = all_categorical() ~ "frequency"
   )|>
@@ -94,7 +90,6 @@ tbl_1
 tbl_1 |>
   as_flex_table() |>
   save_as_docx(path = "results/tbl-1_characteristics-bat-listings.docx")
-
 
 
 # ==============================================================================
@@ -130,7 +125,6 @@ tbl_s1 |>
   save_as_docx(path = "results/tbl-s1_k-picta-vs-other-bats-etsy.docx")
 
 
-
 # ==============================================================================
 # * Tbl S2. Comparison between K. picta listings on ebay and etsy
 # ==============================================================================
@@ -162,7 +156,6 @@ tbl_s2
 tbl_s2 |>
   as_flex_table() |>
   save_as_docx(path = "results/tbl-2_k-picta-etsy-vs-ebay.docx")
-
 
 
 # ==============================================================================
@@ -209,7 +202,6 @@ format_bar_plot = vl |>
 format_bar_plot
 
 ggsave("results/plot_format-bar-plot.jpg", format_bar_plot, width = 9)
-
 
 
 # ==============================================================================
@@ -304,7 +296,6 @@ price_df |>
 # https://stackoverflow.com/a/68357304/5443003
 
 
-
 # ==============================================================================
 # * Differences in average weekly prices for k. picta vs other bats on etsy
 # ==============================================================================
@@ -318,7 +309,6 @@ etsy_price_df = plot_df |>
 mean_price_kpicta = round(mean(etsy_price_df$Etsy_Kpicta), 2)
 mean_price_others = round(mean(etsy_price_df$Etsy_OtherBats), 2)
 mean_price_diff = mean_price_kpicta - mean_price_others
-
 
 
 # ==============================================================================
@@ -344,7 +334,6 @@ peak_prices |>
   data.frame()
 
 
-
 # ==============================================================================
 # * Fig other. Price plots: K. picta by shop
 # ==============================================================================
@@ -358,7 +347,7 @@ shop_price_plot = vl %>%
   filter(species %in% "K. picta") |>
   left_join(shop_sample_size) |>
   mutate(myaxis = paste0(shop, "\n", "n=", num)) |>
-  ggplot( aes(x=reorder(myaxis, price_mean, mean), y=price_mean, color = shop, fill = shop)) +
+  ggplot( aes(x=reorder(myaxis, mean_price, mean), y=mean_price, color = shop, fill = shop)) +
   geom_violin(width=0.75, alpha = 0.2) +
   geom_boxplot(width=0.1, alpha=0.4) +
   geom_sina(alpha = .5, size = 0.5) +
@@ -383,9 +372,8 @@ shop_price_plot = vl %>%
 # 
 # vl |>
 #   filter(species %in% "K. picta") |>
-#   select(shop, price_mean) |>
+#   select(shop, mean_price) |>
 #   tbl_summary(by = shop)
-
 
 
 # ==============================================================================
@@ -401,7 +389,7 @@ format_price_plot = vl %>%
   filter(species %in% "K. picta") |>
   left_join(format_sample_size) |>
   mutate(myaxis = paste0(format, "\n", "n=", num)) |>
-  ggplot( aes(x=reorder(myaxis, price_mean, mean), y=price_mean, color = format,
+  ggplot( aes(x=reorder(myaxis, mean_price, mean), y=mean_price, color = format,
     fill = format)) +
   geom_violin(width=0.75, alpha = 0.2) +
   geom_boxplot(width=0.1, alpha=0.4) +
@@ -424,9 +412,8 @@ format_price_plot = vl %>%
 # 
 # vl |>
 #   filter(species %in% "K. picta") |>
-#   select(format, price_mean) |>
+#   select(format, mean_price) |>
 #   tbl_summary(by = format)
-
 
 
 # ==============================================================================
@@ -434,15 +421,13 @@ format_price_plot = vl %>%
 # ==============================================================================
 vl |>
   filter(species %in% "K. picta") |>
-  select(part, price_mean) |>
+  select(part, mean_price) |>
   tbl_summary(by = part)
-
 
   
 # ==============================================================================
 # * Fig 5. Shipping country plots
 # ==============================================================================
-
 ship_join = bat_df |>
   select(ship_country, ship_state, listing) |>
   unique()
@@ -489,7 +474,9 @@ country_bar_plot = ship_df %>%
 
 country_bar_plot
 
+
 # Numbers behind figure
+# ------------------------------------------------------------------------------
 ship_df |>
   group_by(species, country) |>
   tally() |>
@@ -579,8 +566,6 @@ country_plot = plot_grid(country_bar_plot,
 country_plot
 
 ggsave("results/fig-5_ship-country.jpg", country_plot, width = 7)
-ggsave("results/fig-5_ship-country.svg", country_plot, width = 7)
-
 
 
 # ==============================================================================
@@ -683,6 +668,7 @@ ggsave("results/fig-6_ship-state.jpg", state_plot, width = 7)
 
 
 # Numbers behind figure
+# ------------------------------------------------------------------------------
 state_df |>
   group_by(species, state) |>
   tally() |>
