@@ -1,17 +1,17 @@
 ##===========================================================================##
 ## Set up workspace and load libraries
 ##===========================================================================##
-library(tidyverse)
-library(ggplot2)
-library(dplyr)
-library(chisq.posthoc.test)
 library(car)
-library(lme4)
-library(report)
-library(lmerTest)
-library(glmm.hp)
+library(chisq.posthoc.test)
+library(dplyr)
 library(emmeans)
+library(ggplot2)
+library(glmm.hp)
+library(lme4)
+library(lmerTest)
 library(performance)
+library(report)
+library(tidyverse)
 
 conflicts_prefer(stats::chisq.test)
 conflicts_prefer(lme4::lmer)
@@ -22,9 +22,9 @@ all_listings = read.csv("data/Coleman_et_al_SI_1_all-bat-listings.csv")
 unique_listings = read.csv("data/Coleman_et_al_SI_2_unique-listings-info.csv")
 
 
-##===========================================================================##
-## ANALYSIS 1. Does the count of individual Kpicta differ between eBay & Etsy?##
-##===========================================================================##
+##=============================================================================##
+## ANALYSIS 1. Does the count of individual Kpicta differ between eBay & Etsy? ##
+##=============================================================================##
 
 sum(unique_listings$individuals[ unique_listings$species %in% "K. picta" ]) # 284
 
@@ -254,13 +254,14 @@ emmeans(Kpicta.price.reduced.sqrt, specs = pairwise ~ shop, type = "response")
 
 ## Figure 4. Jitter boxplot with mean listing price (not estimated means)
 ggplot(Kpicta.price, aes(x=format, y=mean_price, fill=shop)) +
-  geom_boxplot(position=position_dodge(width=0.8)) +
+  geom_boxplot(position=position_dodge(width=0.8), outlier.shape = NA) +
   coord_cartesian(ylim=c(0,250)) +
-  xlab("Format") + ylab("Mean weekly listing price (USD)") +
+  xlab("Format") + ylab("Mean listing price (USD)") +
   scale_fill_manual(values = c(Amazon = '#BBCC33', eBay = '#EEDD88', Etsy = '#77AADD'),
     name="Platform") +
-  geom_point(position=position_jitterdodge(jitter.width = 0.1,
-                                           dodge.width = 0.8),
-             aes(fill=shop),
-             pch=21) +
+  geom_point(
+    position=position_jitterdodge(jitter.width = 0.1, dodge.width = 0.8),
+    aes(fill = shop),
+    show.legend = FALSE,
+    pch=21) +
   theme_bw()
