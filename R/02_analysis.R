@@ -225,7 +225,7 @@ check_heteroscedasticity(Kpicta.price.reduced)
 # Comprehensive diagnostic plots
 check_model(Kpicta.price.reduced)
 
-## 1.2 Rerun with sqrt-transformed price
+## 2.3 Rerun with sqrt-transformed price
 ## -----------------------------------------------------------------------------
 Kpicta.price.reduced.sqrt <- lmer(sqrt(mean_price) ~ format + shop + (1|seller), data=Kpicta.price)
 summary(Kpicta.price.reduced.sqrt)
