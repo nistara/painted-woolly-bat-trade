@@ -85,7 +85,6 @@ chisq.posthoc.test(bat.format, method = "bonferroni")
 
 
 ## Repeat for Etsy only ##------------------------------------------------------
-
 ## Create df with 3 variables: format (4 levels), species (2 levels; exclude undetermined), listing.count (total number)
 bat_format_Etsy <- unique_listings |>
   filter(species!="Undetermined" & shop %in% "Etsy") |>
@@ -193,7 +192,7 @@ Kpicta.price <- unique_listings |>
 
 str(Kpicta.price)
 
-## 1.1 Fit saturated GLMM (DV = price; fixed effects = platform (aka shop), format; random effect = seller)
+## 2.1 Fit saturated GLMM (DV = price; fixed effects = platform (aka shop), format; random effect = seller)
 ## -----------------------------------------------------------------------------
 Kpicta.price.full <- lmer(mean_price ~ format * shop + (1|seller), data=Kpicta.price)
 summary(Kpicta.price.full)
@@ -209,7 +208,8 @@ check_heteroscedasticity(Kpicta.price.full)
 # Comprehensive diagnostic plots
 check_model(Kpicta.price.full)
 
-## Remove interaction term & retry
+## 2.2 Remove interaction term & retry
+## -----------------------------------------------------------------------------
 Kpicta.price.reduced <- lmer(mean_price ~ format + shop + (1|seller), data=Kpicta.price)
 summary(Kpicta.price.reduced)
 
@@ -253,6 +253,7 @@ emmeans(Kpicta.price.reduced.sqrt, specs = pairwise ~ format, type = "response")
 emmeans(Kpicta.price.reduced.sqrt, specs = pairwise ~ shop, type = "response") 
 
 ## Figure 4. Jitter boxplot with mean listing price (not estimated means)
+## =============================================================================
 ggplot(Kpicta.price, aes(x=format, y=mean_price, fill=shop)) +
   geom_boxplot(position=position_dodge(width=0.8), outlier.shape = NA) +
   coord_cartesian(ylim=c(0,250)) +
