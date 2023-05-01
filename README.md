@@ -4,5 +4,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7874686.svg)](https://doi.org/10.5281/zenodo.7874686)
 <!-- badges: end -->
 
-# The online, ornamental trade in the painted woolly bat (_Kerivoula picta_)
+# Dying for décor: Quantifying the online, ornamental trade in a distinctive bat species, _Kerivoula picta_
+
+
 
