@@ -2,7 +2,6 @@
 # Project specific files
 # ==============================================================================
 docs
-data
 results
 code-ref
 *.Rhistory
