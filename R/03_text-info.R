@@ -122,24 +122,6 @@ names(comm_names)
 cat(sprintf('"%s" (%s%%)', gsub("_", " ", names(comm_names)), round(comm_names)), sep = ", ")
 
 
-# ==============================================================================
-# * Ethics
-# ==============================================================================
-vl$ethics = (grepl("ethic|sustain|responsibl|conserv", vl$description, ignore.case = TRUE) |
-                   grepl("ethic|sustain|responsibl|conserv", vl$title, ignore.case = TRUE))
-
-
-
-# # * Table for ethics words in verified K. picta bats
-# # ==============================================================================
-# vl |>
-#   filter(species %in% "K. picta") |>
-#   group_by(ethics) |>
-#   tally() |>
-#   adorn_totals()
-# 
-# write.csv(ethics_df, "data/for-analysis/text-search/ethics.csv", row.names = FALSE, na = "")
-
 
 # ==============================================================================
 # * Search for goth/halloween/christmas decor, etc
@@ -194,4 +176,21 @@ addl_search_df |>
   adorn_totals(where = "col") |>
   arrange(-Total) |>
   adorn_totals()
+
+
+
+# ==============================================================================
+# * Ethics
+# ==============================================================================
+vl$ethics = (grepl("ethic|sustain|responsibl|conserv", vl$description, ignore.case = TRUE) |
+                   grepl("ethic|sustain|responsibl|conserv", vl$title, ignore.case = TRUE))
+
+ethics_df = vl |>
+  filter(ethics) |>
+  select(listing, seller, title, description, bat, species, ethics) |>
+  arrange(species)
+
+# The text was read to manually verify for the presence of terms referencing
+# ethical sourcing (however inaccurate they may be).
+
 
