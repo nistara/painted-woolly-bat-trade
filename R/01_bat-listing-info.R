@@ -34,8 +34,8 @@ conflicts_prefer(dplyr::select)
 out_dir = "results"
 if( !dir.exists(out_dir) ) dir.create(out_dir)
 
-vl = readRDS("data/Coleman_et_al_SI_2_unique-listings-info.RDS") # verified, unique listings
-bat_df = readRDS("data/Coleman_et_al_SI_1_all-bat-listings.RDS") # all bat listings
+vl = readRDS("data/Coleman_et_al_unique-listings-info.RDS") # verified, unique listings
+bat_df = readRDS("data/Coleman_et_al_all-bat-listings.RDS") # all bat listings
 
 
 # ==============================================================================

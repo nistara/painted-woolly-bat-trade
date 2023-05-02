@@ -29,8 +29,8 @@ search_fun = function(search_term, text) {
 out_dir = "results"
 if( !dir.exists(out_dir) ) dir.create(out_dir)
 
-# Note: the text data hasn't been shared in the repository for privacy reasons
-vl = readRDS("data/Coleman_et_al_SI_3_unique-listings-text.RDS") |>
+# Note: the text data hasn't been shared in the repository for privacy concerns
+vl = readRDS("data/Coleman_et_al_unique-listings-text.RDS") |>
   filter(species %in% "K. picta")
 
 

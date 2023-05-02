@@ -18,8 +18,8 @@ conflicts_prefer(lme4::lmer)
 
 ## Import datasets for analysis
 ## -----------------------------------------------------------------------------
-all_listings = read.csv("data/Coleman_et_al_SI_1_all-bat-listings.csv")
-unique_listings = read.csv("data/Coleman_et_al_SI_2_unique-listings-info.csv")
+all_listings = read.csv("data/Coleman_et_al_all-bat-listings.csv")
+unique_listings = read.csv("data/Coleman_et_al_unique-listings-info.csv")
 
 
 ##=============================================================================##
