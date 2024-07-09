@@ -2,7 +2,6 @@
 # Project specific files
 # ==============================================================================
 docs
-results
 code-ref
 *unique-listings-text*
 *.Rhistory
