@@ -254,7 +254,7 @@ emmeans(Kpicta.price.reduced.sqrt, specs = pairwise ~ shop, type = "response")
 
 ## Figure 4. Jitter boxplot with mean listing price (not estimated means)
 ## =============================================================================
-ggplot(Kpicta.price, aes(x=format, y=mean_price, fill=shop)) +
+listing_price_boxplot = ggplot(Kpicta.price, aes(x=format, y=mean_price, fill=shop)) +
   geom_boxplot(position=position_dodge(width=0.8), outlier.shape = NA) +
   coord_cartesian(ylim=c(0,250)) +
   xlab("Format") + ylab("Mean listing price (USD)") +
@@ -266,3 +266,5 @@ ggplot(Kpicta.price, aes(x=format, y=mean_price, fill=shop)) +
     show.legend = FALSE,
     pch=21) +
   theme_bw()
+
+ggsave("results/fig-4_listing-price-boxplot.jpg", listing_price_boxplot, width = 9)

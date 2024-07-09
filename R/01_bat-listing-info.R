@@ -20,6 +20,8 @@ library(janitor)
 library(lubridate)
 library(stringr)
 library(tidyr)
+
+# Run the following commented out code for importing fonts if you haven't already
 # extrafont::font_import()
 
 extrafont::loadfonts(quiet = TRUE)
@@ -155,7 +157,7 @@ tbl_s2
 
 tbl_s2 |>
   as_flex_table() |>
-  save_as_docx(path = "results/tbl-2_k-picta-etsy-vs-ebay.docx")
+  save_as_docx(path = "results/tbl-s2_k-picta-etsy-vs-ebay.docx")
 
 
 # ==============================================================================
@@ -201,7 +203,7 @@ format_bar_plot = vl |>
 
 format_bar_plot
 
-ggsave("results/plot_format-bar-plot.jpg", format_bar_plot, width = 9)
+ggsave("results/fig-2_format-bar-plot.jpg", format_bar_plot, width = 9)
 
 
 # ==============================================================================
